@@ -42,7 +42,40 @@ Key deliverables:
 - LinkedIn video script
 
 Repository: [Task-2-EDA](https://github.com/luckyghanghas/Task-2-EDA)
+### Task 3: Deep-Dive Analysis & Interactive Dashboarding
 
+Task 3 focused on creating interactive dashboards and performing deep-dive business analysis using visualization techniques and KPI tracking. The work included dashboard development, trend analysis, performance monitoring, business insight generation, and interactive reporting for decision-making.
+
+Key deliverables:
+
+* Interactive business dashboard
+* KPI tracking and visualization
+* Sales and performance analysis
+* Trend and pattern identification
+* Business insight report
+* Dashboard screenshots and documentation
+* LinkedIn video script
+
+Repository: [Task-3-Dashboard](https://github.com/luckyghanghas/Task-3-Dashboard)
+
+### Task 4: Data Storytelling & Statistical Validation
+
+Task 4 focused on presenting analytical insights through business storytelling and validating findings using statistical techniques. The work included stakeholder-style presentation creation, statistical analysis, visualization design, business recommendations, and professional insight communication.
+
+Key deliverables:
+
+* Business presentation PPT
+* Statistical validation report
+* Data storytelling presentation
+* Charts and dashboard visuals
+* Business recommendations
+* Stakeholder insight summary
+* Presentation walkthrough video
+* LinkedIn presentation script
+
+Repository: [Task-4-Storytelling](https://github.com/luckyghanghas/Task-4-Storytelling)
+
+ 
 ## Skills Demonstrated
 
 - Data cleaning and wrangling with Python/Pandas
