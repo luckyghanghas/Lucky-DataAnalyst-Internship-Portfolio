@@ -55,25 +55,4 @@ Repository: [Task-2-EDA](https://github.com/luckyghanghas/Task-2-EDA)
 - Business reporting and documentation
 - GitHub portfolio organization
 
-## Recommended GitHub Repository Structure
-
-```text
-GitHub Profile
-├── Task-1-Data-Wrangling
-├── Task-2-EDA
-├── Task-3-Dashboard
-├── Task-4-Storytelling
-└── Lucky-DataAnalyst-Internship-Portfolio
-```
-
-## One-Link Submission
-
-For a single ApexPlanet portfolio submission link, use this master portfolio repository after it is uploaded to GitHub:
-
-```text
-https://github.com/luckyghanghas/Lucky-DataAnalyst-Internship-Portfolio
-```
-
-## Final Reflection
-
-This internship portfolio documents my progress from raw data preparation to business analysis and dashboard planning. Each task builds toward an end-to-end data analytics workflow: cleaning data, analyzing patterns, answering business questions, creating visual summaries, and presenting findings professionally.
+ 
