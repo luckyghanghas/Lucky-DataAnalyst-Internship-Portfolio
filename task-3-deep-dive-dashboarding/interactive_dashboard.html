@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Retail Sales Dashboard</title>
+<style>
+body { margin:0; font-family: Arial, sans-serif; color:#172126; background:#f6f7f4; }
+header { padding:24px 32px; background:#17343a; color:white; }
+main { padding:24px 32px 40px; max-width:1180px; margin:auto; }
+.kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:14px; margin:22px 0; }
+.card { background:white; border:1px solid #d9ded8; border-radius:8px; padding:16px; }
+.label { color:#61706b; font-size:13px; }
+.value { font-size:28px; font-weight:700; margin-top:6px; }
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+@media (max-width:800px) { .grid { grid-template-columns:1fr; } main { padding:18px; } }
+table { width:100%; border-collapse:collapse; font-size:14px; }
+th,td { padding:9px 8px; border-bottom:1px solid #e3e6e1; text-align:left; }
+th { color:#485650; }
+.bar { height:10px; background:#2f6f73; border-radius:5px; display:inline-block; }
+</style>
+</head>
+<body>
+<header>
+<h1>Retail Sales Performance Dashboard</h1>
+<p>Interactive KPI view for revenue, channel mix, regional returns, and category performance.</p>
+</header>
+<main>
+<section class="kpis" id="kpis"></section>
+<section class="grid">
+<div class="card"><h2>Revenue by Channel</h2><table id="channel"></table></div>
+<div class="card"><h2>Regional Return Risk</h2><table id="region"></table></div>
+<div class="card"><h2>Category Performance</h2><table id="category"></table></div>
+<div class="card"><h2>Monthly Trend</h2><table id="month"></table></div>
+</section>
+</main>
+<script>
+const data = {"kpis": {"Revenue": "$5,328,492.40", "Orders": "1,250", "AOV": "$4,262.79", "Gross Margin": "20.3%", "Return Rate": "5.2%"}, "region": [{"region": "East", "revenue": 1287643.6, "returns": 0.041, "orders": 292}, {"region": "North", "revenue": 1288064.81, "returns": 0.057, "orders": 299}, {"region": "South", "revenue": 1301485.12, "returns": 0.072, "orders": 320}, {"region": "West", "revenue": 1451298.87, "returns": 0.038, "orders": 339}], "channel": [{"sales_channel": "Mobile App", "revenue": 2054498.79, "orders": 456}, {"sales_channel": "Retail Store", "revenue": 809713.99, "orders": 202}, {"sales_channel": "Website", "revenue": 2464279.62, "orders": 592}], "category": [{"category": "Accessories", "revenue": 1609821.52, "return_rate": 0.04}, {"category": "Audio", "revenue": 1255686.34, "return_rate": 0.065}, {"category": "Office", "revenue": 1094774.7, "return_rate": 0.048}, {"category": "Wearables", "revenue": 1368209.84, "return_rate": 0.072}], "month": [{"month": "2025-01", "revenue": 414508.3, "orders": 101}, {"month": "2025-02", "revenue": 381797.56, "orders": 84}, {"month": "2025-03", "revenue": 253183.26, "orders": 80}, {"month": "2025-04", "revenue": 361993.81, "orders": 88}, {"month": "2025-05", "revenue": 332373.01, "orders": 86}, {"month": "2025-06", "revenue": 373196.49, "orders": 77}, {"month": "2025-07", "revenue": 397458.33, "orders": 88}, {"month": "2025-08", "revenue": 334842.66, "orders": 94}, {"month": "2025-09", "revenue": 345674.85, "orders": 77}, {"month": "2025-10", "revenue": 364085.7, "orders": 77}, {"month": "2025-11", "revenue": 330265.79, "orders": 84}, {"month": "2025-12", "revenue": 326024.85, "orders": 87}, {"month": "2026-01", "revenue": 441892.25, "orders": 89}, {"month": "2026-02", "revenue": 388410.22, "orders": 74}, {"month": "2026-03", "revenue": 282785.32, "orders": 64}]};
+document.getElementById('kpis').innerHTML = Object.entries(data.kpis).map(([k,v]) =>
+  `<div class="card"><div class="label">${k}</div><div class="value">${v}</div></div>`).join('');
+function money(n) { return '$' + Number(n).toLocaleString(undefined, {maximumFractionDigits:0}); }
+function percent(n) { return (Number(n) * 100).toFixed(1) + '%'; }
+function table(id, rows, cols) {
+  const max = Math.max(...rows.map(r => Number(r.revenue || r.orders || 1)));
+  document.getElementById(id).innerHTML = '<tr>' + cols.map(c => `<th>${c.label}</th>`).join('') + '</tr>' +
+    rows.map(r => '<tr>' + cols.map(c => {
+      let val = c.format ? c.format(r[c.key]) : r[c.key];
+      if (c.key === 'revenue') val += `<br><span class="bar" style="width:${Math.max(18, Number(r[c.key]) / max * 170)}px"></span>`;
+      return `<td>${val}</td>`;
+    }).join('') + '</tr>').join('');
+}
+table('channel', data.channel, [{key:'sales_channel',label:'Channel'},{key:'orders',label:'Orders'},{key:'revenue',label:'Revenue',format:money}]);
+table('region', data.region, [{key:'region',label:'Region'},{key:'orders',label:'Orders'},{key:'returns',label:'Return Rate',format:percent}]);
+table('category', data.category, [{key:'category',label:'Category'},{key:'revenue',label:'Revenue',format:money},{key:'return_rate',label:'Return Rate',format:percent}]);
+table('month', data.month.slice(-8), [{key:'month',label:'Month'},{key:'orders',label:'Orders'},{key:'revenue',label:'Revenue',format:money}]);
+</script>
+</body>
+</html>
