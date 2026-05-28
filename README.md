@@ -13,7 +13,7 @@ Turn raw sales transaction data into useful business insight through cleaning, S
 | `task-1-data-immersion-wrangling` | Data dictionary, cleaning script, and cleaning report. |
 | `task-2-eda-business-intelligence` | EDA report, SQL queries, SQL results, charts, and SQLite database. |
 | `task-3-deep-dive-dashboarding` | KPI definitions, deep-dive report, interactive HTML dashboard, and PPTX dashboard. |
-| `task-4-storytelling-statistical-validation` | Final presentation outline and hypothesis testing summary. |
+| `task-4-storytelling-statistical-validation` | Final presentation outline, PPTX deck, and hypothesis testing summary. |
 | `task-5-capstone-portfolio` | LinkedIn scripts, final post, and portfolio materials. |
 
 ## GitHub Task Links
