@@ -10,7 +10,7 @@ The portfolio is hosted as a visual dashboard via GitHub Pages:
 👉 **[View Interactive Web Portfolio](https://luckyghanghas.github.io/Lucky-DataAnalyst-Internship-Portfolio/)**
 
 Submission Repository:
-👉 [https://github.com/luckyghanghas/Lucky-DataAnalyst-Internship-Portfolio](https://github.com/luckyghanghas/Lucky-DataAnalship-Portfolio)
+👉 [https://github.com/luckyghanghas/Lucky-DataAnalyst-Internship-Portfolio](https://github.com/luckyghanghas/Lucky-DataAnalyst-Internship-Portfolio)
 
 ---
 
