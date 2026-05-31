@@ -1,34 +1,637 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lucky DataAnalyst Internship Portfolio</title>
-<style>
-body{font-family:Arial,sans-serif;margin:0;color:#172126;background:#f8f9f6}
-header{background:#17343a;color:white;padding:42px 28px}
-main{max-width:980px;margin:auto;padding:28px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
-.card{background:white;border:1px solid #dde2dc;border-radius:8px;padding:18px}
-a{color:#1f6c74;font-weight:700}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lucky's Data Analyst Internship Portfolio</title>
+  <!-- Google Fonts: Outfit & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-main: #f8fafc;
+      --bg-card: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-light: #e0e7ff;
+      --success: #10b981;
+      --success-light: #d1fae5;
+      --warning: #f59e0b;
+      --warning-light: #fef3c7;
+      --border: #e2e8f0;
+      --gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      --accent-gradient: linear-gradient(135deg, #6366f1 0%, #06b6d4 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+    }
+
+    /* Header styling with modern background gradient */
+    header {
+      background: var(--gradient);
+      color: white;
+      padding: 80px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .header-content {
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .avatar {
+      width: 72px;
+      height: 72px;
+      background: var(--accent-gradient);
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+      letter-spacing: -0.025em;
+    }
+
+    header p {
+      color: #94a3b8;
+      font-size: 1.1rem;
+      font-weight: 400;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .badge-internship {
+      display: inline-block;
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: #a5b4fc;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-top: 16px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* Main container layout */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* Card styling */
+    section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    section:hover {
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+    }
+
+    section h2 {
+      font-size: 1.75rem;
+      margin-bottom: 24px;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 2px solid var(--bg-main);
+      padding-bottom: 12px;
+    }
+
+    /* Task Grid with responsive columns */
+    .task-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      margin-top: 16px;
+    }
+
+    @media (min-width: 768px) {
+      .task-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .task-card {
+      background: var(--bg-main);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .task-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+    }
+
+    .task-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .task-num {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .task-status {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+    }
+
+    .task-status.completed {
+      background-color: var(--success-light);
+      color: #065f46;
+    }
+
+    .task-status.in-progress {
+      background-color: var(--warning-light);
+      color: #92400e;
+    }
+
+    .task-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 10px;
+      color: #1e293b;
+    }
+
+    .task-card p {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      flex-grow: 1;
+    }
+
+    .task-deliverables {
+      margin-bottom: 20px;
+    }
+
+    .task-deliverables span {
+      display: inline-block;
+      background: #e2e8f0;
+      color: #475569;
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin: 3px 2px;
+    }
+
+    .btn-repo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: white;
+      border: 1px solid var(--border);
+      color: #334155;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      width: 100%;
+      text-align: center;
+    }
+
+    .btn-repo:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+    }
+
+    /* Skills Grid layout */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 640px) {
+      .skills-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 960px) {
+      .skills-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .skills-category {
+      background: var(--bg-main);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .skills-category h3 {
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .skills-list {
+      list-style: none;
+    }
+
+    .skills-list li {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .skills-list li::before {
+      content: '✓';
+      color: var(--success);
+      font-weight: bold;
+    }
+
+    /* Download Presentation Section */
+    .presentation-banner {
+      background: var(--gradient);
+      color: white;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 48px 32px;
+    }
+
+    .presentation-banner h2 {
+      color: white;
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-bottom: 10px;
+    }
+
+    .presentation-banner p {
+      color: #94a3b8;
+      max-width: 600px;
+      margin-bottom: 24px;
+      font-size: 0.95rem;
+    }
+
+    .btn-download {
+      background: var(--accent-gradient);
+      color: white;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-download:hover {
+      transform: translateY(-2px);
+      opacity: 0.95;
+    }
+
+    /* Professional Reflection */
+    .reflection-box {
+      background: #f1f5f9;
+      border-left: 4px solid var(--primary);
+      padding: 24px;
+      border-radius: 0 12px 12px 0;
+      margin-bottom: 20px;
+    }
+
+    .linkedin-post {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      color: #334155;
+      white-space: pre-wrap;
+      max-height: 300px;
+      overflow-y: auto;
+      border-top: 3px solid #0077b5;
+    }
+
+    .btn-copy {
+      display: inline-block;
+      margin-top: 12px;
+      background: #0077b5;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .btn-copy:hover {
+      background: #005582;
+    }
+
+    /* Footer styling */
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--border);
+      margin-top: 48px;
+      background: white;
+    }
+
+    footer p {
+      margin-bottom: 6px;
+    }
+  </style>
 </head>
 <body>
-<header><h1>Lucky DataAnalyst Internship Portfolio</h1><p>Retail sales analytics project covering cleaning, SQL, EDA, dashboarding, storytelling, and statistical validation.</p></header>
-<main>
-<h2>Project Tasks</h2>
-<section class="grid">
-<div class="card"><h3>Task 1</h3><p>Data immersion, wrangling, dictionary, and cleaned dataset.</p></div>
-<div class="card"><h3>Task 2</h3><p>EDA, SQL business questions, and dashboard mock-up.</p></div>
-<div class="card"><h3>Task 3</h3><p>KPI definitions, deep dive, and interactive dashboard.</p></div>
-<div class="card"><h3>Task 4</h3><p>Business story, presentation outline, and hypothesis test.</p></div>
-<div class="card"><h3>Task 5</h3><p>Final portfolio structure and LinkedIn reflection materials.</p></div>
-</section>
-<p><a href="task-3-deep-dive-dashboarding/interactive_dashboard.html">Open Interactive Dashboard</a></p>
-<p><a href="https://github.com/luckyghanghas/Task-1-Data-Immersion-Wrangling">Open Task 1 GitHub Repository</a></p>
-<p><a href="https://github.com/luckyghanghas/Task-2-EDA">Open Task 2 GitHub Repository</a></p>
-<p><a href="https://github.com/luckyghanghas/Task-3-Dashboard">Open Task 3 GitHub Repository</a></p>
-<p><a href="https://github.com/luckyghanghas/Task-4-Storytelling">Open Task 4 GitHub Repository</a></p>
-</main>
+
+  <header>
+    <div class="header-content">
+      <div class="avatar">L</div>
+      <h1>Lucky Ghanghas</h1>
+      <p>Data Analyst Intern Portfolio</p>
+      <div class="badge-internship">60-Day Data Analytics Internship &bull; ApexPlanet</div>
+    </div>
+  </header>
+
+  <main>
+    
+    <!-- Internship Overview -->
+    <section id="overview">
+      <h2>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary)"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line><line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line></svg>
+        Internship Capstone Journey
+      </h2>
+      <p style="color: var(--text-muted); margin-bottom: 24px; font-size: 0.98rem;">
+        Consolidated roadmap representing raw transaction processing, descriptive exploratory data analysis, interactive pipeline integration, statistical validation, and executive-level insight synthesis.
+      </p>
+      
+      <div class="task-grid">
+        
+        <!-- Task 1 -->
+        <div class="task-card">
+          <div>
+            <div class="task-card-header">
+              <span class="task-num">Task 1</span>
+              <span class="task-status completed">Completed</span>
+            </div>
+            <h3>Data Immersion & Wrangling</h3>
+            <p>Designed a repeatable Python/Pandas data pipeline to handle mixed date formats, drop duplicate transactions, resolve age out-of-bounds metrics, and calculate correct transaction economics.</p>
+            <div class="task-deliverables">
+              <span>Python Script</span>
+              <span>Data Dictionary</span>
+              <span>Quality Report</span>
+            </div>
+          </div>
+          <a href="https://github.com/luckyghanghas/Task-1-Data-Immersion-Wrangling" target="_blank" class="btn-repo">View Repository</a>
+        </div>
+
+        <!-- Task 2 -->
+        <div class="task-card">
+          <div>
+            <div class="task-card-header">
+              <span class="task-num">Task 2</span>
+              <span class="task-status completed">Completed</span>
+            </div>
+            <h3>EDA & Business Intelligence</h3>
+            <p>Executed advanced SQL queries to address business questions regarding performance trends, ROI, customer demographics, and select major KPIs for static reporting.</p>
+            <div class="task-deliverables">
+              <span>SQL Script</span>
+              <span>Excel Mockup</span>
+              <span>EDA Summary</span>
+            </div>
+          </div>
+          <a href="https://github.com/luckyghanghas/Task-2-EDA" target="_blank" class="btn-repo">View Repository</a>
+        </div>
+
+        <!-- Task 3 -->
+        <div class="task-card">
+          <div>
+            <div class="task-card-header">
+              <span class="task-num">Task 3</span>
+              <span class="task-status completed">Completed</span>
+            </div>
+            <h3>Interactive BI Dashboarding</h3>
+            <p>Translated raw analytics queries into an interactive cohort-retention, funnel, and segment dashboard. Aligned KPIs with strict analytical mathematical definitions.</p>
+            <div class="task-deliverables">
+              <span>Cohort Analysis</span>
+              <span>Funnel Analysis</span>
+              <span>Requirements</span>
+            </div>
+          </div>
+          <a href="https://github.com/luckyghanghas/Task-3-Dashboard" target="_blank" class="btn-repo">View Repository</a>
+        </div>
+
+        <!-- Task 4 -->
+        <div class="task-card">
+          <div>
+            <div class="task-card-header">
+              <span class="task-num">Task 4</span>
+              <span class="task-status completed">Completed</span>
+            </div>
+            <h3>Data Storytelling & Stats</h3>
+            <p>Performed statistical validation (Welch's T-Test, Z-Test, Chi-Square) in Python/scipy and generated a dynamic presentation with Aptos aesthetic slide decks.</p>
+            <div class="task-deliverables">
+              <span>scipy Script</span>
+              <span>Z-test & T-test</span>
+              <span>PowerPoint</span>
+            </div>
+          </div>
+          <a href="https://github.com/luckyghanghas/Task-4-Storytelling" target="_blank" class="btn-repo">View Repository</a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Refined Presentation Deck -->
+    <section class="presentation-banner">
+      <h2>Refined Presentation Deck</h2>
+      <p>Download the comprehensive presentation deck summarizing the sales dataset insights, statistical tests, data wrangling pipelines, and strategic business growth proposals.</p>
+      <a href="presentation/data_storytelling_and_statistical_validation.pptx" download class="btn-download">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        Download PPTX Presentation
+      </a>
+    </section>
+
+    <!-- Technical Skills -->
+    <section id="skills">
+      <h2>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary)"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+        Core Competencies & Stack
+      </h2>
+      <div class="skills-grid">
+        
+        <div class="skills-category">
+          <h3>Data Processing</h3>
+          <ul class="skills-list">
+            <li>Python (Pandas, NumPy)</li>
+            <li>Outlier Treatment</li>
+            <li>Inconsistent Formatting</li>
+            <li>Missing Value Handling</li>
+          </ul>
+        </div>
+
+        <div class="skills-category">
+          <h3>SQL & Analysis</h3>
+          <ul class="skills-list">
+            <li>Descriptive Statistics</li>
+            <li>Cohort Analysis</li>
+            <li>Aggregations & Joins</li>
+            <li>Performance Indicators</li>
+          </ul>
+        </div>
+
+        <div class="skills-category">
+          <h3>Statistical Methods</h3>
+          <ul class="skills-list">
+            <li>Welch's T-Test</li>
+            <li>Two-Proportion Z-Test</li>
+            <li>Chi-Square Independence</li>
+            <li>Confidence Intervals</li>
+          </ul>
+        </div>
+
+        <div class="skills-category">
+          <h3>Visualization</h3>
+          <ul class="skills-list">
+            <li>Interactive Dashboards</li>
+            <li>PowerPoint PPTXGenJS</li>
+            <li>Cohort Visualizations</li>
+            <li>Executive Deck Design</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Professional Reflection -->
+    <section id="reflection">
+      <h2>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary)"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
+        Professional Reflection & Socials
+      </h2>
+      <div class="reflection-box">
+        <p style="font-weight: 600; color: #1e293b; margin-bottom: 8px;">60-Day Internship Reflections</p>
+        <p style="color: var(--text-muted); font-size: 0.92rem;">This capstone represents an end-to-end analytics pipeline: transforming messy sales transactions into structural dashboards, backing business arguments with scipy hypothesis tests, and building scalable automated presentations.</p>
+      </div>
+      
+      <p style="font-size: 0.95rem; font-weight: 600; color: #1e293b; margin-bottom: 12px;">Draft LinkedIn Post:</p>
+      <div class="linkedin-post" id="postText">🚀 Delighted to share the completion of my 60-Day Data Analytics Internship portfolio!
+
+During this intensive program, I built and deployed end-to-end data pipelines and analytical resources:
+
+🔹 Task 1: Wrangled raw datasets using Python/Pandas, handling missing values, anomalies, and mixed schemas.
+🔹 Task 2: Analyzed sales, conversion, and ROI patterns using advanced SQL aggregations and select business KPIs.
+🔹 Task 3: Architected an interactive Cohort, Funnel, and Customer Segmentation Dashboard with formalized mathematical KPI formulas.
+🔹 Task 4: Performed statistical validation using SciPy (Welch's T-Test, Z-test, Chi-squared) to validate customer satisfaction channels and dynamically built executive slide decks using JS.
+🔹 Task 5: Assembled everything into a professional master repository and website portfolio.
+
+Stack used: Python, SQL, SciPy, Pandas, JavaScript, GitHub Pages.
+
+Check out the full internship work on GitHub:
+👉 https://github.com/luckyghanghas/Lucky-DataAnalyst-Internship-Portfolio
+
+#DataAnalytics #Python #SQL #Statistics #DataStorytelling #CareerGrowth</div>
+      <button class="btn-copy" onclick="copyPostText()">Copy LinkedIn Post</button>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Lucky Ghanghas &bull; ApexPlanet Internship Portfolio</p>
+    <p style="font-size: 0.78rem; opacity: 0.7;">Hosted with GitHub Pages</p>
+  </footer>
+
+  <script>
+    function copyPostText() {
+      const text = document.getElementById("postText").innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        alert("LinkedIn post text copied to clipboard!");
+      }).catch(err => {
+        console.error("Could not copy text: ", err);
+      });
+    }
+  </script>
 </body>
 </html>
