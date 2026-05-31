@@ -63,27 +63,3 @@ Focused on validating business claims through rigorous statistics and compiling 
 ## 📝 Professional Reflection
 
 This internship portfolio documents a structured transition from raw data manipulation to executive strategic insight. By building robust Python wrangling scripts, writing descriptive SQL summaries, designing math-aligned cohorts, and conducting statistical validation tests, I have established a professional analytics workflow that values data integrity and statistical validity over raw metrics.
-
----
-
-## 📣 LinkedIn Reflection Post Draft
-Below is the draft post prepared for my LinkedIn profile update:
-
-```text
-🚀 Delighted to share the completion of my 60-Day Data Analytics Internship portfolio!
-
-During this intensive program, I built and deployed end-to-end data pipelines and analytical resources:
-
-🔹 Task 1: Wrangled raw datasets using Python/Pandas, handling missing values, anomalies, and mixed schemas.
-🔹 Task 2: Analyzed sales, conversion, and ROI patterns using advanced SQL aggregations and select business KPIs.
-🔹 Task 3: Architected an interactive Cohort, Funnel, and Customer Segmentation Dashboard with formalized mathematical KPI formulas.
-🔹 Task 4: Performed statistical validation using SciPy (Welch's T-Test, Z-test, Chi-squared) to validate customer satisfaction channels and dynamically built executive slide decks using JS.
-🔹 Task 5: Assembled everything into a professional master repository and website portfolio.
-
-Stack used: Python, SQL, SciPy, Pandas, JavaScript, GitHub Pages.
-
-Check out the full internship work on GitHub:
-👉 https://github.com/luckyghanghas/Lucky-DataAnalyst-Internship-Portfolio
-
-#DataAnalytics #Python #SQL #Statistics #DataStorytelling #CareerGrowth
-```
