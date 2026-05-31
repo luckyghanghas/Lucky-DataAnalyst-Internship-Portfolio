@@ -210,12 +210,7 @@
       color: #065f46;
     }
 
-    .task-status.in-progress {
-      background-color: var(--warning-light);
-      color: #92400e;
-    }
-
-    .task-card h3 {
+    .task h3 {
       font-size: 1.25rem;
       margin-bottom: 10px;
       color: #1e293b;
@@ -367,15 +362,6 @@
       opacity: 0.95;
     }
 
-    /* Professional Reflection */
-    .reflection-box {
-      background: #f1f5f9;
-      border-left: 4px solid var(--primary);
-      padding: 24px;
-      border-radius: 0 12px 12px 0;
-      margin-bottom: 20px;
-    }
-
     /* Footer styling */
     footer {
       text-align: center;
@@ -424,7 +410,7 @@
               <span class="task-num">Task 1</span>
               <span class="task-status completed">Completed</span>
             </div>
-            <h3>Data Immersion & Wrangling</h3>
+            <h3>Data Wrangling & Immersion</h3>
             <p>Designed a repeatable Python/Pandas data pipeline to handle mixed date formats, drop duplicate transactions, resolve age out-of-bounds metrics, and calculate correct transaction economics.</p>
             <div class="task-deliverables">
               <span>Python Script</span>
@@ -553,23 +539,12 @@
       </div>
     </section>
 
-    <!-- Professional Reflection -->
-    <section id="reflection">
-      <h2>
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary)"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
-        Professional Reflection
-      </h2>
-      <div class="reflection-box">
-        <p style="font-weight: 600; color: #1e293b; margin-bottom: 8px;">60-Day Internship Reflections</p>
-        <p style="color: var(--text-muted); font-size: 0.92rem;">This capstone represents an end-to-end analytics pipeline: transforming messy sales transactions into structural dashboards, backing business arguments with scipy hypothesis tests, and building scalable automated presentations.</p>
-      </div>
-    </section>
-
   </main>
 
   <footer>
     <p>&copy; 2026 Lucky Ghanghas &bull; ApexPlanet Internship Portfolio</p>
     <p style="font-size: 0.78rem; opacity: 0.7;">Hosted with GitHub Pages</p>
   </footer>
+
 </body>
 </html>
