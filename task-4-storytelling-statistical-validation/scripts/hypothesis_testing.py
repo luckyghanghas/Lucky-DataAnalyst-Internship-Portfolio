@@ -6,7 +6,7 @@ from scipy import stats
 def run_hypothesis_tests():
     # Define file paths
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    data_path = os.path.join(script_dir, "..", "data", "sales_transactions_cleaned.csv")
+    data_path = os.path.join(script_dir, "..", "..", "data", "cleaned", "sales_transactions_cleaned.csv")
     
     if not os.path.exists(data_path):
         print(f"Error: Cleaned sales transactions data file not found at {data_path}")

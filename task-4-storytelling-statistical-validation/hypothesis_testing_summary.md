@@ -1,65 +1,118 @@
-# Task 4 - Data Storytelling & Statistical Validation
+# Task 4 — Data Storytelling & Statistical Validation
 
-## Business Story
-The business is growing through digital channels, with Website and Mobile App responsible for most sales. The opportunity is not just to increase traffic, but to protect profitable growth by improving category-level return behavior and doubling down on high-value customer segments.
+## Business Context
+The business is growing through digital channels, with Website and Mobile App responsible for 84.8% of total revenue ($5.33M). The core strategic question is whether to treat these channels differently from an investment and experience-management perspective. To answer this objectively, statistical hypothesis testing was used to compare customer satisfaction rates across the two digital channels.
 
-## Hypothesis
-**H0:** The share of high-satisfaction orders, defined as rating 4 or 5, is the same for Website and Mobile App orders.
+---
 
-**H1:** Mobile App orders have a different high-satisfaction rate than Website orders.
+## Business Story Arc
 
-## Test Used
-To provide a robust validation of customer rating behavior across digital channels, three statistical tests were executed in Python (`scripts/hypothesis_testing.py`):
-1. **Two-Proportion Z-Test**: To compare the proportion of high-satisfaction orders (ratings $\ge$ 4) between Website and Mobile App.
-2. **Chi-Squared Test of Independence**: To verify if satisfaction category (High vs Low) is independent of the sales channel.
-3. **Welch's T-Test**: To compare the average (mean) raw ratings between Website and Mobile App orders (allowing for unequal variances).
+1. **Data is clean and trustworthy** — 1,250 orders after removing duplicates, fixing dates, and correcting outliers.
+2. **Digital channels dominate** — Website (46.2%) + Mobile App (38.6%) = 84.8% of revenue.
+3. **Profitable growth is not guaranteed** — Email Offer campaigns run at only 13.89% margin vs 26.67% for Search Ads. South region returns at 7.19% cost margin.
+4. **Statistical validation confirms channel parity** — No significant difference in customer satisfaction between Website and Mobile App.
+5. **Invest in both digital channels, fix the operational gaps** — return rates and campaign efficiency are the real levers.
+
+---
+
+## Statistical Hypothesis
+
+**H₀ (Null):** The proportion of high-satisfaction orders (rating ≥ 4) is the same for Website and Mobile App customers.
+
+**H₁ (Alternative):** Mobile App orders have a different high-satisfaction rate than Website orders.
+
+**Significance level:** α = 0.05 (two-tailed)
+
+---
+
+## Tests Performed
+
+Three independent tests were run in Python using `scipy.stats` to provide triangulated evidence (`scripts/hypothesis_testing.py`):
+
+1. **Two-Proportion Z-Test** — Compares satisfaction rates between channels
+2. **Chi-Square Test of Independence** — Tests whether satisfaction class (High/Low) is associated with channel
+3. **Welch's T-Test** — Compares mean raw ratings allowing for unequal variances
+
+---
 
 ## Results
-Below are the statistical results calculated directly from the clean dataset containing 592 Website ratings and 456 Mobile App ratings:
 
-### 1. Two-Proportion Z-Test (Satisfaction Rate Comparison)
-* **H0**: The proportion of high-satisfaction orders is the same for Website and Mobile App.
-* **H1**: The proportion of high-satisfaction orders differs between Website and Mobile App.
+### Test 1: Two-Proportion Z-Test
 
-| Measure | Value |
+| Measure | Website | Mobile App |
+|---|---:|---:|
+| Total Orders | 592 | 456 |
+| High-Satisfaction (Rating ≥ 4) | 408 (68.92%) | 322 (70.61%) |
+| Difference (App − Web) | — | +1.69pp |
+
+| Statistic | Value |
 |---|---:|
-| Website high-satisfaction rate | 68.92% (408/592) |
-| Mobile App high-satisfaction rate | 70.61% (322/456) |
-| Z-statistic | -0.5918 |
+| Z-statistic | −0.5918 |
 | P-value | 0.5540 |
-| 95% Confidence Interval for difference (App - Web) | -3.91% to 7.30% |
+| 95% CI for difference | −3.91% to +7.30% |
 
-### 2. Chi-Squared Test of Independence
-* **H0**: Customer satisfaction class (high vs low) is independent of the sales channel.
-* **H1**: Customer satisfaction class is associated with the sales channel.
+**Decision:** Fail to reject H₀ (p = 0.5540 > 0.05)
 
-| Measure | Value |
+---
+
+### Test 2: Chi-Square Test of Independence
+
+| | High Satisfaction | Low Satisfaction |
+|---|---:|---:|
+| Website | 408 | 184 |
+| Mobile App | 322 | 134 |
+
+| Statistic | Value |
 |---|---:|
 | Chi-square statistic | 0.2746 |
 | P-value | 0.6003 |
 | Degrees of Freedom | 1 |
 
-### 3. Welch's T-Test (Average Rating Comparison)
-* **H0**: The average customer rating is the same for Website and Mobile App orders.
-* **H1**: The average customer rating differs between Website and Mobile App orders.
+**Decision:** Fail to reject H₀ (p = 0.6003 > 0.05). Satisfaction class is independent of sales channel.
 
-| Measure | Value |
+---
+
+### Test 3: Welch's T-Test (Mean Ratings)
+
+| Measure | Website | Mobile App |
+|---|---:|---:|
+| Average Rating | 3.8024 | 3.8596 |
+| Difference | — | +0.0572 |
+
+| Statistic | Value |
 |---|---:|
-| Website average rating | 3.8024 |
-| Mobile App average rating | 3.8596 |
-| T-statistic | -0.8650 |
+| T-statistic | −0.8650 |
 | P-value | 0.3873 |
 
-## Conclusion
-At the 5% significance level, all tests show that the differences in customer satisfaction and customer ratings between the Website and Mobile App channels are **not statistically significant** ($p > 0.05$):
-- The $p$-value for the Z-test is $0.5540$ (fail to reject $H_0$).
-- The $p$-value for the Chi-square test is $0.6003$ (fail to reject $H_0$).
-- The $p$-value for Welch's T-test is $0.3873$ (fail to reject $H_0$).
+**Decision:** Fail to reject H₀ (p = 0.3873 > 0.05)
 
-**Interpretation:** The business should monitor the minor lead in Mobile App ratings and satisfaction, but should not make significant strategic changes or over-claim channel superiority based on this difference, as it can be attributed to random sampling variation. Both digital channels remain critical and deserve continued investment.
+---
 
-## Call to Action
-1. **Increase retention campaigns** for the strongest digital customer segments across both platforms.
-2. **Improve product pages and expectation setting** for product categories with higher returns to drive up satisfaction.
-3. **Track return rate and customer rating together** in a unified performance dashboard, preventing growth metrics from hiding underlying experience issues.
+## Overall Conclusion
 
+All three tests consistently fail to reject H₀ at the 5% significance level. The observed differences in satisfaction rates and average ratings between Website and Mobile App are **not statistically significant** and can be attributed to random sampling variation.
+
+The 95% confidence interval (−3.91% to +7.30%) spans zero, confirming that the true population difference could plausibly be zero or either direction.
+
+**Business interpretation:** Both digital channels deliver statistically equivalent customer experiences. Investment decisions should be driven by margin efficiency and growth potential — not customer satisfaction differences, which are negligible.
+
+---
+
+## Calls to Action
+
+| Priority | Action | Rationale |
+|---|---|---|
+| 🔴 High | Fix South region return rate (7.19%) | 88% above West's rate — operational/product issue |
+| 🔴 High | Reallocate Email Offer budget to Search Ads | 26.67% vs 13.89% margin — 12.78pp gap |
+| 🟡 Medium | App-first retention campaign | Mobile App leads on all profitability metrics |
+| 🟡 Medium | Improve Wearables product descriptions | 7.24% return rate is the highest of any category |
+| 🟢 Low | Build CLV model for 55+ segment | $6,222/customer — highest value, underserved |
+
+---
+
+## Technical Notes
+
+- All tests performed in Python using `scipy.stats` — see `scripts/hypothesis_testing.py`
+- Dataset: 1,048 ratings used (592 Website + 456 Mobile App; Retail Store excluded as not part of hypothesis)
+- High-satisfaction threshold: rating ≥ 4 (out of 5)
+- All tests are two-tailed at α = 0.05
