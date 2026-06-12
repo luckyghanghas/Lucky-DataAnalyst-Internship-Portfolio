@@ -1,6 +1,5 @@
 """
-Sales Dashboard Mockup — fully formatted Excel with embedded charts.
-Fixes: proper chart placement, no overlaps, clean spacing, correct column widths.
+Sales Dashboard Mockup — clean Excel with correct number formatting and proper layout.
 """
 
 from openpyxl import Workbook
@@ -11,116 +10,137 @@ from openpyxl.utils import get_column_letter
 
 wb = Workbook()
 
-# ── Palette ─────────────────────────────────────────────────────────────────
+# ── Palette ──────────────────────────────────────────────────────────────────
 DARK_NAVY  = "0D1B2A"
-TEAL_HDR   = "1B6CA8"
+TEAL       = "1B6CA8"
 TEAL2      = "2F6F73"
 PURPLE     = "5368A6"
 ORANGE     = "C06000"
 GREEN      = "1A7A4A"
 RED        = "C0392B"
-SLATE      = "4A5568"
+SLATE      = "455A64"
 LIGHT_ROW  = "EEF2F7"
 WHITE      = "FFFFFF"
-YELLOW_KPI = "F6C90E"
+GOLD       = "F9A825"
 
-# ── Helpers ──────────────────────────────────────────────────────────────────
+# ── Number formats (US standard, no Indian grouping) ─────────────────────────
+FMT_USD    = '#,##0.00'          # $2,464,279.62
+FMT_USD2   = '#,##0'             # $5,328,492
+FMT_PCT    = '0.00%'
+FMT_INT    = '#,##0'
 
-def set_title_row(ws, row, text, col_span, bg=DARK_NAVY, fg=WHITE, height=30, size=14):
-    ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=col_span)
+# ── Style helpers ─────────────────────────────────────────────────────────────
+def title_row(ws, row, text, span, bg=DARK_NAVY, fg=WHITE, size=14, height=32):
+    ws.merge_cells(start_row=row, start_column=1, end_row=row, end_column=span)
     c = ws.cell(row=row, column=1, value=text)
     c.font      = Font(bold=True, color=fg, size=size, name="Calibri")
     c.fill      = PatternFill("solid", fgColor=bg)
     c.alignment = Alignment(horizontal="center", vertical="center")
     ws.row_dimensions[row].height = height
 
-def set_section_hdr(ws, row, col, text, span, bg=TEAL_HDR, fg=WHITE, height=20):
+def sec_hdr(ws, row, col, text, span, bg=TEAL2, fg=WHITE, height=20):
     ws.merge_cells(start_row=row, start_column=col, end_row=row, end_column=col+span-1)
     c = ws.cell(row=row, column=col, value=text)
-    c.font      = Font(bold=True, color=fg, size=11, name="Calibri")
+    c.font      = Font(bold=True, color=fg, size=10, name="Calibri")
     c.fill      = PatternFill("solid", fgColor=bg)
     c.alignment = Alignment(horizontal="left", vertical="center", indent=1)
     ws.row_dimensions[row].height = height
 
-def set_col_hdr(ws, row, col, text, bg=TEAL2, fg=WHITE):
+def col_hdr(ws, row, col, text, bg=SLATE, fg=WHITE):
     c = ws.cell(row=row, column=col, value=text)
     c.font      = Font(bold=True, color=fg, size=9, name="Calibri")
     c.fill      = PatternFill("solid", fgColor=bg)
     c.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
     thin = Side(style="thin", color="AAAAAA")
-    c.border    = Border(bottom=thin, right=thin)
-    ws.row_dimensions[row].height = 28
+    c.border    = Border(bottom=thin, right=thin, left=thin, top=thin)
+    ws.row_dimensions[row].height = 24
 
-def set_data(ws, row, col, value, align="left", fmt=None, bold=False, bg=None):
+def cell(ws, row, col, value, align="left", fmt=None, bold=False, bg=None, fg="111111"):
     c = ws.cell(row=row, column=col, value=value)
-    c.font      = Font(bold=bold, color="111111", size=10, name="Calibri")
+    c.font      = Font(bold=bold, color=fg, size=10, name="Calibri")
     c.alignment = Alignment(horizontal=align, vertical="center")
     if fmt:
         c.number_format = fmt
     thin = Side(style="thin", color="DDDDDD")
-    c.border = Border(bottom=thin, right=Side(style="thin", color="EEEEEE"))
+    c.border    = Border(bottom=thin, right=thin)
     if bg:
         c.fill = PatternFill("solid", fgColor=bg)
     return c
 
-def stripe(ws, row, cols_range, even):
-    fill = PatternFill("solid", fgColor=LIGHT_ROW if even else WHITE)
-    for col in cols_range:
-        ws.cell(row=row, column=col).fill = fill
+def stripe(ws, row, cols, even):
+    bg = LIGHT_ROW if even else WHITE
+    for col in cols:
+        if not ws.cell(row=row, column=col).fill.fgColor.rgb not in (bg,):
+            ws.cell(row=row, column=col).fill = PatternFill("solid", fgColor=bg)
+
+def kpi_block(ws, row_lbl, row_val, col, label, value, bg):
+    # label cell
+    lc = ws.cell(row=row_lbl, column=col, value=label)
+    lc.font      = Font(bold=True, color=WHITE, size=8, name="Calibri")
+    lc.fill      = PatternFill("solid", fgColor=bg)
+    lc.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+    ws.merge_cells(start_row=row_lbl, start_column=col, end_row=row_lbl, end_column=col+1)
+    # value cell
+    vc = ws.cell(row=row_val, column=col, value=value)
+    vc.font      = Font(bold=True, color=WHITE, size=16, name="Calibri")
+    vc.fill      = PatternFill("solid", fgColor=bg)
+    vc.alignment = Alignment(horizontal="center", vertical="center")
+    ws.merge_cells(start_row=row_val, start_column=col, end_row=row_val, end_column=col+1)
+    # gold accent bar
+    ac = ws.cell(row=row_val+1, column=col, value="")
+    ac.fill = PatternFill("solid", fgColor=GOLD)
+    ws.merge_cells(start_row=row_val+1, start_column=col, end_row=row_val+1, end_column=col+1)
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # SHEET 1 — Executive Dashboard
+# Layout: cols A-J (10 cols)
+#   A-E  = left panel (Products, Region)
+#   F    = spacer (width=2)
+#   G-K  = right panel (Channel, Campaign)
 # ═══════════════════════════════════════════════════════════════════════════════
 ws1 = wb.active
 ws1.title = "Executive Dashboard"
 ws1.sheet_view.showGridLines = False
-ws1.sheet_view.zoomScale = 85
+ws1.sheet_view.zoomScale = 90
 
-# Column widths
-col_widths = {"A":22,"B":16,"C":14,"D":16,"E":14,
-              "F":3, "G":22,"H":16,"I":14,"J":16,"K":14}
-for col, w in col_widths.items():
-    ws1.column_dimensions[col].width = w
+# Column widths — carefully sized so numbers don't get cut
+ws1.column_dimensions["A"].width = 22   # product name
+ws1.column_dimensions["B"].width = 15   # revenue
+ws1.column_dimensions["C"].width = 8    # orders
+ws1.column_dimensions["D"].width = 14   # avg price
+ws1.column_dimensions["E"].width = 10   # return %
+ws1.column_dimensions["F"].width = 2    # spacer
+ws1.column_dimensions["G"].width = 14   # channel/campaign
+ws1.column_dimensions["H"].width = 15   # revenue
+ws1.column_dimensions["I"].width = 8    # orders
+ws1.column_dimensions["J"].width = 15   # gross profit
+ws1.column_dimensions["K"].width = 10   # margin %
 
-# ── Row 1: Main Title ────────────────────────────────────────────────────────
-set_title_row(ws1, 1, "SALES PERFORMANCE EXECUTIVE DASHBOARD", 11, height=34, size=15)
-ws1.row_dimensions[2].height = 6   # spacer
+# ── Row 1: Main title ────────────────────────────────────────────────────────
+title_row(ws1, 1, "SALES PERFORMANCE EXECUTIVE DASHBOARD", 11, height=34, size=15)
+ws1.row_dimensions[2].height = 5   # spacer
 
-# ── Rows 3–5: KPI Cards (5 KPIs across cols A–E, one per column) ────────────
+# ── Rows 3–5: KPI cards (5 KPIs) ─────────────────────────────────────────────
+ws1.row_dimensions[3].height = 16
+ws1.row_dimensions[4].height = 34
+ws1.row_dimensions[5].height = 5
+
 kpis = [
-    ("TOTAL REVENUE",    "$5,328,492",  TEAL2),
-    ("TOTAL ORDERS",     "1,250",       PURPLE),
-    ("AVG ORDER VALUE",  "$4,262.79",   ORANGE),
-    ("GROSS MARGIN",     "20.32%",      GREEN),
-    ("RETURN RATE",      "5.20%",       RED),
+    (1,  "TOTAL REVENUE",   "$5,328,492",  TEAL2),
+    (3,  "TOTAL ORDERS",    "1,250",       PURPLE),
+    (5,  "AVG ORDER VALUE", "$4,262.79",   ORANGE),
+    (7,  "GROSS MARGIN",    "20.32%",      GREEN),
+    (9,  "RETURN RATE",     "5.20%",       RED),
 ]
-kpi_cols = [1, 2, 3, 4, 5]
-for i, (label, value, color) in enumerate(kpis):
-    col = kpi_cols[i]
-    # label
-    lc = ws1.cell(row=3, column=col, value=label)
-    lc.font      = Font(bold=True, color=WHITE, size=8, name="Calibri")
-    lc.fill      = PatternFill("solid", fgColor=color)
-    lc.alignment = Alignment(horizontal="center", vertical="center")
-    ws1.row_dimensions[3].height = 16
-    # value
-    vc = ws1.cell(row=4, column=col, value=value)
-    vc.font      = Font(bold=True, color=WHITE, size=15, name="Calibri")
-    vc.fill      = PatternFill("solid", fgColor=color)
-    vc.alignment = Alignment(horizontal="center", vertical="center")
-    ws1.row_dimensions[4].height = 32
-    # bottom accent
-    bc = ws1.cell(row=5, column=col, value="")
-    bc.fill = PatternFill("solid", fgColor=YELLOW_KPI)
-    ws1.row_dimensions[5].height = 4
+for col, label, value, bg in kpis:
+    kpi_block(ws1, 3, 4, col, label, value, bg)
 
-ws1.row_dimensions[6].height = 10  # spacer
+ws1.row_dimensions[6].height = 8  # spacer before tables
 
-# ── Rows 7–17: Top Products (cols A–E) ──────────────────────────────────────
-set_section_hdr(ws1, 7,  1, "  TOP PRODUCTS BY REVENUE", 5, bg=TEAL2)
-prod_hdrs = ["Product Name","Revenue ($)","Orders","Avg Price ($)","Return %"]
-for i, h in enumerate(prod_hdrs):
-    set_col_hdr(ws1, 8, i+1, h, bg=SLATE)
+# ── Rows 7–17: TOP PRODUCTS (cols A–E) ───────────────────────────────────────
+sec_hdr(ws1, 7, 1, "  TOP PRODUCTS BY REVENUE", 5, bg=TEAL2)
+for i, h in enumerate(["Product Name", "Revenue ($)", "Orders", "Avg Price ($)", "Return %"]):
+    col_hdr(ws1, 8, i+1, h)
 
 products = [
     ("Smart Watch",          1368209.84, 152, 6042.26, 0.0724),
@@ -134,21 +154,20 @@ products = [
 ]
 for r, (name, rev, ord_, avg, ret) in enumerate(products):
     row = 9 + r
-    stripe(ws1, row, range(1,6), r % 2 == 0)
-    set_data(ws1, row, 1, name,  "left")
-    set_data(ws1, row, 2, rev,   "right", '$#,##0.00')
-    set_data(ws1, row, 3, ord_,  "right")
-    set_data(ws1, row, 4, avg,   "right", '$#,##0.00')
-    set_data(ws1, row, 5, ret,   "right", '0.00%')
-    ws1.row_dimensions[row].height = 16
+    bg  = LIGHT_ROW if r % 2 == 0 else WHITE
+    ws1.row_dimensions[row].height = 15
+    cell(ws1, row, 1, name,  "left",   bg=bg)
+    cell(ws1, row, 2, rev,   "right",  FMT_USD,  bg=bg)
+    cell(ws1, row, 3, ord_,  "center", FMT_INT,  bg=bg)
+    cell(ws1, row, 4, avg,   "right",  FMT_USD,  bg=bg)
+    cell(ws1, row, 5, ret,   "center", FMT_PCT,  bg=bg)
 
 ws1.row_dimensions[17].height = 8  # spacer
 
-# ── Rows 7–12: Revenue by Channel (cols G–K) ─────────────────────────────────
-set_section_hdr(ws1, 7,  7, "  REVENUE BY SALES CHANNEL", 5, bg=ORANGE)
-ch_hdrs = ["Channel","Revenue ($)","Orders","Gross Profit ($)","Margin %"]
-for i, h in enumerate(ch_hdrs):
-    set_col_hdr(ws1, 8, i+7, h, bg=SLATE)
+# ── Rows 7–12: REVENUE BY CHANNEL (cols G–K) ─────────────────────────────────
+sec_hdr(ws1, 7, 7, "  REVENUE BY SALES CHANNEL", 5, bg=ORANGE)
+for i, h in enumerate(["Channel", "Revenue ($)", "Orders", "Gross Profit ($)", "Margin %"]):
+    col_hdr(ws1, 8, i+7, h)
 
 channels = [
     ("Website",      2464279.62, 592, 488850.64, 0.1984),
@@ -157,21 +176,20 @@ channels = [
 ]
 for r, (ch, rev, ord_, gp, margin) in enumerate(channels):
     row = 9 + r
-    stripe(ws1, row, range(7,12), r % 2 == 0)
-    set_data(ws1, row, 7,  ch,     "left")
-    set_data(ws1, row, 8,  rev,    "right", '$#,##0.00')
-    set_data(ws1, row, 9,  ord_,   "right")
-    set_data(ws1, row, 10, gp,     "right", '$#,##0.00')
-    set_data(ws1, row, 11, margin, "right", '0.00%')
-    ws1.row_dimensions[row].height = 16
+    bg  = LIGHT_ROW if r % 2 == 0 else WHITE
+    ws1.row_dimensions[row].height = 15
+    cell(ws1, row, 7,  ch,     "left",   bg=bg)
+    cell(ws1, row, 8,  rev,    "right",  FMT_USD, bg=bg)
+    cell(ws1, row, 9,  ord_,   "center", FMT_INT, bg=bg)
+    cell(ws1, row, 10, gp,     "right",  FMT_USD, bg=bg)
+    cell(ws1, row, 11, margin, "center", FMT_PCT, bg=bg)
 
 ws1.row_dimensions[12].height = 8  # spacer
 
-# ── Rows 13–18: Region (cols A–E) ────────────────────────────────────────────
-set_section_hdr(ws1, 13, 1, "  PERFORMANCE BY REGION", 5, bg=GREEN)
-reg_hdrs = ["Region","Revenue ($)","Orders","Gross Profit ($)","Return %"]
-for i, h in enumerate(reg_hdrs):
-    set_col_hdr(ws1, 14, i+1, h, bg=SLATE)
+# ── Rows 18–23: PERFORMANCE BY REGION (cols A–E) ─────────────────────────────
+sec_hdr(ws1, 18, 1, "  PERFORMANCE BY REGION", 5, bg=GREEN)
+for i, h in enumerate(["Region", "Revenue ($)", "Orders", "Gross Profit ($)", "Return %"]):
+    col_hdr(ws1, 19, i+1, h)
 
 regions = [
     ("West",  1451298.87, 339, 273233.41, 0.0383),
@@ -180,22 +198,21 @@ regions = [
     ("East",  1287643.60, 292, 243585.42, 0.0411),
 ]
 for r, (reg, rev, ord_, gp, ret) in enumerate(regions):
-    row = 15 + r
-    stripe(ws1, row, range(1,6), r % 2 == 0)
-    set_data(ws1, row, 1, reg,  "left")
-    set_data(ws1, row, 2, rev,  "right", '$#,##0.00')
-    set_data(ws1, row, 3, ord_, "right")
-    set_data(ws1, row, 4, gp,   "right", '$#,##0.00')
-    set_data(ws1, row, 5, ret,  "right", '0.00%')
-    ws1.row_dimensions[row].height = 16
+    row = 20 + r
+    bg  = LIGHT_ROW if r % 2 == 0 else WHITE
+    ws1.row_dimensions[row].height = 15
+    cell(ws1, row, 1, reg,  "left",   bg=bg)
+    cell(ws1, row, 2, rev,  "right",  FMT_USD, bg=bg)
+    cell(ws1, row, 3, ord_, "center", FMT_INT, bg=bg)
+    cell(ws1, row, 4, gp,   "right",  FMT_USD, bg=bg)
+    cell(ws1, row, 5, ret,  "center", FMT_PCT, bg=bg)
 
-ws1.row_dimensions[19].height = 8  # spacer
+ws1.row_dimensions[24].height = 8  # spacer
 
-# ── Rows 13–20: Campaigns (cols G–K) ─────────────────────────────────────────
-set_section_hdr(ws1, 13, 7, "  MARKETING CAMPAIGN SUMMARY", 5, bg=PURPLE)
-camp_hdrs = ["Campaign","Revenue ($)","Orders","Gross Profit ($)","Margin %"]
-for i, h in enumerate(camp_hdrs):
-    set_col_hdr(ws1, 14, i+7, h, bg=SLATE)
+# ── Rows 13–20: MARKETING CAMPAIGN SUMMARY (cols G–K) ────────────────────────
+sec_hdr(ws1, 13, 7, "  MARKETING CAMPAIGN SUMMARY", 5, bg=PURPLE)
+for i, h in enumerate(["Campaign", "Revenue ($)", "Orders", "Gross Profit ($)", "Margin %"]):
+    col_hdr(ws1, 14, i+7, h)
 
 campaigns = [
     ("Search Ads",   1034918.19, 219, 276020.30, 0.2667),
@@ -207,65 +224,57 @@ campaigns = [
 ]
 for r, (camp, rev, ord_, gp, margin) in enumerate(campaigns):
     row = 15 + r
-    stripe(ws1, row, range(7,12), r % 2 == 0)
-    set_data(ws1, row, 7,  camp,   "left")
-    set_data(ws1, row, 8,  rev,    "right", '$#,##0.00')
-    set_data(ws1, row, 9,  ord_,   "right")
-    set_data(ws1, row, 10, gp,     "right", '$#,##0.00')
-    set_data(ws1, row, 11, margin, "right", '0.00%')
-    ws1.row_dimensions[row].height = 16
+    bg  = LIGHT_ROW if r % 2 == 0 else WHITE
+    ws1.row_dimensions[row].height = 15
+    cell(ws1, row, 7,  camp,   "left",   bg=bg)
+    cell(ws1, row, 8,  rev,    "right",  FMT_USD, bg=bg)
+    cell(ws1, row, 9,  ord_,   "center", FMT_INT, bg=bg)
+    cell(ws1, row, 10, gp,     "right",  FMT_USD, bg=bg)
+    cell(ws1, row, 11, margin, "center", FMT_PCT, bg=bg)
 
-# ── Row 22 onward: CHARTS ────────────────────────────────────────────────────
-# Pie chart — Revenue by Channel  (A22)
+# ── Row 25+: CHARTS ───────────────────────────────────────────────────────────
+# Pie chart — Channel Revenue  placed at A25
 pie1 = PieChart()
 pie1.title  = "Revenue by Sales Channel"
-pie1.style  = 26
+pie1.style  = 10
 pie1.width  = 14
-pie1.height = 11
-labels_ch = Reference(ws1, min_col=7,  min_row=9,  max_row=11)
-values_ch = Reference(ws1, min_col=8,  min_row=8,  max_row=11)
-pie1.add_data(values_ch, titles_from_data=True)
-pie1.set_categories(labels_ch)
+pie1.height = 12
+pie1.add_data(Reference(ws1, min_col=8, min_row=8, max_row=11), titles_from_data=True)
+pie1.set_categories(Reference(ws1, min_col=7, min_row=9, max_row=11))
 for i, color in enumerate([TEAL2, PURPLE, ORANGE]):
     pt = DataPoint(idx=i)
     pt.graphicalProperties.solidFill = color
     pie1.series[0].dPt.append(pt)
-ws1.add_chart(pie1, "A22")
+ws1.add_chart(pie1, "A25")
 
-# Bar chart — Top Products  (G22)
-bar_prod = BarChart()
-bar_prod.type            = "bar"
-bar_prod.title           = "Top 8 Products by Revenue ($)"
-bar_prod.y_axis.title    = "Product"
-bar_prod.x_axis.title    = "Revenue ($)"
-bar_prod.style           = 26
-bar_prod.width           = 20
-bar_prod.height          = 13
-cats_p = Reference(ws1, min_col=1, min_row=9,  max_row=16)
-vals_p = Reference(ws1, min_col=2, min_row=8,  max_row=16)
-bar_prod.add_data(vals_p, titles_from_data=True)
-bar_prod.set_categories(cats_p)
-bar_prod.series[0].graphicalProperties.solidFill      = TEAL2
-bar_prod.series[0].graphicalProperties.line.solidFill = TEAL2
-ws1.add_chart(bar_prod, "G22")
+# Bar chart — Top Products  placed at G25
+bar1 = BarChart()
+bar1.type  = "bar"
+bar1.title = "Top 8 Products by Revenue"
+bar1.style = 10
+bar1.width = 20
+bar1.height = 13
+bar1.add_data(Reference(ws1, min_col=2, min_row=8, max_row=16), titles_from_data=True)
+bar1.set_categories(Reference(ws1, min_col=1, min_row=9, max_row=16))
+bar1.series[0].graphicalProperties.solidFill      = TEAL2
+bar1.series[0].graphicalProperties.line.solidFill = TEAL2
+ws1.add_chart(bar1, "G25")
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # SHEET 2 — Monthly Trend
 # ═══════════════════════════════════════════════════════════════════════════════
 ws2 = wb.create_sheet("Monthly Trend")
 ws2.sheet_view.showGridLines = False
-ws2.sheet_view.zoomScale = 85
+ws2.sheet_view.zoomScale = 90
 
-for col, w in {"A":13,"B":18,"C":13,"D":18,"E":18,"F":15}.items():
+for col, w in {"A":12,"B":18,"C":10,"D":18,"E":18,"F":14}.items():
     ws2.column_dimensions[col].width = w
 
-set_title_row(ws2, 1, "MONTHLY SALES AND PROFIT TREND", 6, height=30, size=14)
-ws2.row_dimensions[2].height = 6
+title_row(ws2, 1, "MONTHLY SALES AND PROFIT TREND", 6, height=30)
+ws2.row_dimensions[2].height = 5
 
-trend_hdrs = ["Order Month","Total Revenue ($)","Orders",
-              "Total Cost ($)","Gross Profit ($)","Profit Margin %"]
-for i, h in enumerate(trend_hdrs):
-    set_col_hdr(ws2, 3, i+1, h, bg=TEAL_HDR)
+for i, h in enumerate(["Order Month","Total Revenue ($)","Orders","Total Cost ($)","Gross Profit ($)","Profit Margin %"]):
+    col_hdr(ws2, 3, i+1, h, bg=TEAL)
 
 monthly = [
     ("2025-01", 414508.30, 101, 336284.42,  78223.88, 0.1887),
@@ -284,90 +293,84 @@ monthly = [
     ("2026-02", 388410.22,  74, 317467.41,  70942.81, 0.1826),
     ("2026-03", 282785.32,  64, 225720.97,  57064.35, 0.2018),
 ]
-for r, row_data in enumerate(monthly):
+for r, d in enumerate(monthly):
     row = 4 + r
-    stripe(ws2, row, range(1,7), r % 2 == 0)
-    set_data(ws2, row, 1, row_data[0], "center")
-    set_data(ws2, row, 2, row_data[1], "right", '$#,##0.00')
-    set_data(ws2, row, 3, row_data[2], "right")
-    set_data(ws2, row, 4, row_data[3], "right", '$#,##0.00')
-    set_data(ws2, row, 5, row_data[4], "right", '$#,##0.00')
-    set_data(ws2, row, 6, row_data[5], "right", '0.00%')
-    ws2.row_dimensions[row].height = 16
+    bg  = LIGHT_ROW if r % 2 == 0 else WHITE
+    ws2.row_dimensions[row].height = 15
+    cell(ws2, row, 1, d[0], "center", bg=bg)
+    cell(ws2, row, 2, d[1], "right",  FMT_USD, bg=bg)
+    cell(ws2, row, 3, d[2], "center", FMT_INT, bg=bg)
+    cell(ws2, row, 4, d[3], "right",  FMT_USD, bg=bg)
+    cell(ws2, row, 5, d[4], "right",  FMT_USD, bg=bg)
+    cell(ws2, row, 6, d[5], "center", FMT_PCT, bg=bg)
 
 # Total row
 tr = 19
+ws2.row_dimensions[tr].height = 18
 for col in range(1, 7):
     c = ws2.cell(row=tr, column=col)
-    c.font = Font(bold=True, color=WHITE, size=10, name="Calibri")
-    c.fill = PatternFill("solid", fgColor=DARK_NAVY)
+    c.font      = Font(bold=True, color=WHITE, size=10, name="Calibri")
+    c.fill      = PatternFill("solid", fgColor=DARK_NAVY)
     c.alignment = Alignment(horizontal="right" if col > 1 else "center", vertical="center")
-ws2.cell(row=tr, column=1).value = "TOTAL"
-ws2.cell(row=tr, column=2).value = 5328492.40;  ws2.cell(row=tr, column=2).number_format = '$#,##0.00'
-ws2.cell(row=tr, column=3).value = 1250
-ws2.cell(row=tr, column=4).value = 4245778.09;  ws2.cell(row=tr, column=4).number_format = '$#,##0.00'
-ws2.cell(row=tr, column=5).value = 1082548.82;  ws2.cell(row=tr, column=5).number_format = '$#,##0.00'
-ws2.cell(row=tr, column=6).value = 0.2032;      ws2.cell(row=tr, column=6).number_format = '0.00%'
-ws2.row_dimensions[tr].height = 20
+ws2.cell(row=tr, column=1).value  = "TOTAL"
+ws2.cell(row=tr, column=2).value  = 5328492.40;  ws2.cell(row=tr,column=2).number_format = FMT_USD
+ws2.cell(row=tr, column=3).value  = 1250;         ws2.cell(row=tr,column=3).number_format = FMT_INT
+ws2.cell(row=tr, column=4).value  = 4245778.09;  ws2.cell(row=tr,column=4).number_format = FMT_USD
+ws2.cell(row=tr, column=5).value  = 1082548.82;  ws2.cell(row=tr,column=5).number_format = FMT_USD
+ws2.cell(row=tr, column=6).value  = 0.2032;       ws2.cell(row=tr,column=6).number_format = FMT_PCT
 
-ws2.row_dimensions[20].height = 10  # spacer before charts
+ws2.row_dimensions[20].height = 8
 
-# Line chart — Revenue & Profit  (A21)
+# Line chart — Revenue vs Profit
 line1 = LineChart()
-line1.title           = "Monthly Revenue vs Gross Profit (Jan 2025 – Mar 2026)"
-line1.y_axis.title    = "Amount ($)"
-line1.x_axis.title    = "Month"
-line1.style           = 26
-line1.width           = 28
-line1.height          = 14
-cats_l = Reference(ws2, min_col=1, min_row=4, max_row=18)
-vals_r = Reference(ws2, min_col=2, min_row=3, max_row=18)
-vals_g = Reference(ws2, min_col=5, min_row=3, max_row=18)
-line1.add_data(vals_r, titles_from_data=True)
-line1.add_data(vals_g, titles_from_data=True)
-line1.set_categories(cats_l)
+line1.title          = "Monthly Revenue vs Gross Profit"
+line1.y_axis.title   = "Amount ($)"
+line1.x_axis.title   = "Month"
+line1.style          = 10
+line1.width          = 28
+line1.height         = 14
+line1.add_data(Reference(ws2, min_col=2, min_row=3, max_row=18), titles_from_data=True)
+line1.add_data(Reference(ws2, min_col=5, min_row=3, max_row=18), titles_from_data=True)
+line1.set_categories(Reference(ws2, min_col=1, min_row=4, max_row=18))
 line1.series[0].graphicalProperties.line.solidFill = PURPLE
-line1.series[0].graphicalProperties.line.width     = 28000
+line1.series[0].graphicalProperties.line.width     = 25000
 line1.series[1].graphicalProperties.line.solidFill = GREEN
-line1.series[1].graphicalProperties.line.width     = 28000
+line1.series[1].graphicalProperties.line.width     = 25000
 ws2.add_chart(line1, "A21")
 
-# Column chart — Monthly Orders  (A39)
-bar_ord = BarChart()
-bar_ord.type          = "col"
-bar_ord.title         = "Monthly Order Count"
-bar_ord.y_axis.title  = "Orders"
-bar_ord.x_axis.title  = "Month"
-bar_ord.style         = 26
-bar_ord.width         = 28
-bar_ord.height        = 12
-cats_o = Reference(ws2, min_col=1, min_row=4, max_row=18)
-vals_o = Reference(ws2, min_col=3, min_row=3, max_row=18)
-bar_ord.add_data(vals_o, titles_from_data=True)
-bar_ord.set_categories(cats_o)
-bar_ord.series[0].graphicalProperties.solidFill      = ORANGE
-bar_ord.series[0].graphicalProperties.line.solidFill = ORANGE
-ws2.add_chart(bar_ord, "A39")
+# Column chart — Order Count
+bar2 = BarChart()
+bar2.type          = "col"
+bar2.title         = "Monthly Order Count"
+bar2.y_axis.title  = "Orders"
+bar2.x_axis.title  = "Month"
+bar2.style         = 10
+bar2.width         = 28
+bar2.height        = 12
+bar2.add_data(Reference(ws2, min_col=3, min_row=3, max_row=18), titles_from_data=True)
+bar2.set_categories(Reference(ws2, min_col=1, min_row=4, max_row=18))
+bar2.series[0].graphicalProperties.solidFill      = ORANGE
+bar2.series[0].graphicalProperties.line.solidFill = ORANGE
+ws2.add_chart(bar2, "A39")
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # SHEET 3 — Category & Segments
 # ═══════════════════════════════════════════════════════════════════════════════
 ws3 = wb.create_sheet("Category & Segments")
 ws3.sheet_view.showGridLines = False
-ws3.sheet_view.zoomScale = 85
+ws3.sheet_view.zoomScale = 90
 
-for col, w in {"A":16,"B":17,"C":12,"D":16,"E":17,"F":14,
-               "G":3,"H":13,"I":17,"J":12,"K":17}.items():
+for col, w in {"A":14,"B":16,"C":9,"D":14,"E":16,"F":12,
+               "G":2, "H":12,"I":16,"J":9,"K":16}.items():
     ws3.column_dimensions[col].width = w
 
-set_title_row(ws3, 1, "CATEGORY & SEGMENT BREAKDOWNS", 11, height=30, size=14)
-ws3.row_dimensions[2].height = 6
+title_row(ws3, 1, "CATEGORY & SEGMENT BREAKDOWNS", 11, height=30)
+ws3.row_dimensions[2].height = 5
 
-# Category table  (cols A–F)
-set_section_hdr(ws3, 3, 1, "  SALES BY PRODUCT CATEGORY", 6, bg=TEAL2)
-cat_hdrs = ["Category","Revenue ($)","Orders","Avg Price ($)","Gross Profit ($)","Margin %"]
-for i, h in enumerate(cat_hdrs):
-    set_col_hdr(ws3, 4, i+1, h, bg=SLATE)
+# Category table A–F
+sec_hdr(ws3, 3, 1, "  SALES BY PRODUCT CATEGORY", 6, bg=TEAL2)
+for i, h in enumerate(["Category","Revenue ($)","Orders","Avg Price ($)","Gross Profit ($)","Margin %"]):
+    col_hdr(ws3, 4, i+1, h)
 
 categories = [
     ("Accessories", 1609821.52, 478, 2055.11, 345746.17, 0.2148),
@@ -377,20 +380,19 @@ categories = [
 ]
 for r, (cat, rev, ord_, avg, gp, margin) in enumerate(categories):
     row = 5 + r
-    stripe(ws3, row, range(1,7), r % 2 == 0)
-    set_data(ws3, row, 1, cat)
-    set_data(ws3, row, 2, rev,    "right", '$#,##0.00')
-    set_data(ws3, row, 3, ord_,   "right")
-    set_data(ws3, row, 4, avg,    "right", '$#,##0.00')
-    set_data(ws3, row, 5, gp,     "right", '$#,##0.00')
-    set_data(ws3, row, 6, margin, "right", '0.00%')
-    ws3.row_dimensions[row].height = 16
+    bg  = LIGHT_ROW if r % 2 == 0 else WHITE
+    ws3.row_dimensions[row].height = 15
+    cell(ws3, row, 1, cat,    "left",   bg=bg)
+    cell(ws3, row, 2, rev,    "right",  FMT_USD, bg=bg)
+    cell(ws3, row, 3, ord_,   "center", FMT_INT, bg=bg)
+    cell(ws3, row, 4, avg,    "right",  FMT_USD, bg=bg)
+    cell(ws3, row, 5, gp,     "right",  FMT_USD, bg=bg)
+    cell(ws3, row, 6, margin, "center", FMT_PCT, bg=bg)
 
-# Segment table  (cols H–K)
-set_section_hdr(ws3, 3, 8, "  SALES BY CUSTOMER SEGMENT", 4, bg=PURPLE)
-seg_hdrs = ["Age Group","Revenue ($)","Orders","Rev/Customer ($)"]
-for i, h in enumerate(seg_hdrs):
-    set_col_hdr(ws3, 4, i+8, h, bg=SLATE)
+# Segment table H–K
+sec_hdr(ws3, 3, 8, "  SALES BY CUSTOMER SEGMENT", 4, bg=PURPLE)
+for i, h in enumerate(["Age Group","Revenue ($)","Orders","Rev/Customer ($)"]):
+    col_hdr(ws3, 4, i+8, h)
 
 segments = [
     ("18-24", 884965.42,  210, 5746.53),
@@ -401,78 +403,70 @@ segments = [
 ]
 for r, (age, rev, ord_, rpc) in enumerate(segments):
     row = 5 + r
-    stripe(ws3, row, range(8,12), r % 2 == 0)
-    set_data(ws3, row, 8,  age,  "center")
-    set_data(ws3, row, 9,  rev,  "right", '$#,##0.00')
-    set_data(ws3, row, 10, ord_, "right")
-    set_data(ws3, row, 11, rpc,  "right", '$#,##0.00')
-    ws3.row_dimensions[row].height = 16
+    bg  = LIGHT_ROW if r % 2 == 0 else WHITE
+    ws3.row_dimensions[row].height = 15
+    cell(ws3, row, 8,  age,  "center", bg=bg)
+    cell(ws3, row, 9,  rev,  "right",  FMT_USD, bg=bg)
+    cell(ws3, row, 10, ord_, "center", FMT_INT, bg=bg)
+    cell(ws3, row, 11, rpc,  "right",  FMT_USD, bg=bg)
 
-ws3.row_dimensions[10].height = 10  # spacer before charts
+ws3.row_dimensions[10].height = 8
 
-# Bar chart — Category Revenue  (A11)
-bar_cat = BarChart()
-bar_cat.type          = "col"
-bar_cat.title         = "Revenue by Product Category ($)"
-bar_cat.y_axis.title  = "Revenue ($)"
-bar_cat.style         = 26
-bar_cat.width         = 18
-bar_cat.height        = 12
-cats_c = Reference(ws3, min_col=1, min_row=5, max_row=8)
-vals_c = Reference(ws3, min_col=2, min_row=4, max_row=8)
-bar_cat.add_data(vals_c, titles_from_data=True)
-bar_cat.set_categories(cats_c)
-bar_cat.series[0].graphicalProperties.solidFill      = TEAL2
-bar_cat.series[0].graphicalProperties.line.solidFill = TEAL2
-ws3.add_chart(bar_cat, "A11")
+# Bar chart — Category Revenue  A11
+bar3 = BarChart()
+bar3.type          = "col"
+bar3.title         = "Revenue by Product Category ($)"
+bar3.y_axis.title  = "Revenue ($)"
+bar3.style         = 10
+bar3.width         = 18
+bar3.height        = 12
+bar3.add_data(Reference(ws3, min_col=2, min_row=4, max_row=8), titles_from_data=True)
+bar3.set_categories(Reference(ws3, min_col=1, min_row=5, max_row=8))
+bar3.series[0].graphicalProperties.solidFill      = TEAL2
+bar3.series[0].graphicalProperties.line.solidFill = TEAL2
+ws3.add_chart(bar3, "A11")
 
-# Pie chart — Category Share  (A28)
-pie_cat = PieChart()
-pie_cat.title  = "Category Revenue Share"
-pie_cat.style  = 26
-pie_cat.width  = 14
-pie_cat.height = 11
-labels_c = Reference(ws3, min_col=1, min_row=5, max_row=8)
-values_c = Reference(ws3, min_col=2, min_row=4, max_row=8)
-pie_cat.add_data(values_c, titles_from_data=True)
-pie_cat.set_categories(labels_c)
+# Pie chart — Category share  A28
+pie2 = PieChart()
+pie2.title  = "Category Revenue Share"
+pie2.style  = 10
+pie2.width  = 14
+pie2.height = 11
+pie2.add_data(Reference(ws3, min_col=2, min_row=4, max_row=8), titles_from_data=True)
+pie2.set_categories(Reference(ws3, min_col=1, min_row=5, max_row=8))
 for i, color in enumerate([TEAL2, PURPLE, ORANGE, GREEN]):
     pt = DataPoint(idx=i)
     pt.graphicalProperties.solidFill = color
-    pie_cat.series[0].dPt.append(pt)
-ws3.add_chart(pie_cat, "A28")
+    pie2.series[0].dPt.append(pt)
+ws3.add_chart(pie2, "A28")
 
-# Bar chart — Rev per Customer by Age  (H11)
-bar_seg = BarChart()
-bar_seg.type          = "col"
-bar_seg.title         = "Revenue per Customer by Age Group ($)"
-bar_seg.y_axis.title  = "Revenue / Customer ($)"
-bar_seg.style         = 26
-bar_seg.width         = 18
-bar_seg.height        = 12
-cats_s = Reference(ws3, min_col=8,  min_row=5, max_row=9)
-vals_s = Reference(ws3, min_col=11, min_row=4, max_row=9)
-bar_seg.add_data(vals_s, titles_from_data=True)
-bar_seg.set_categories(cats_s)
-bar_seg.series[0].graphicalProperties.solidFill      = PURPLE
-bar_seg.series[0].graphicalProperties.line.solidFill = PURPLE
-ws3.add_chart(bar_seg, "H11")
+# Bar chart — Rev per Customer  H11
+bar4 = BarChart()
+bar4.type          = "col"
+bar4.title         = "Revenue per Customer by Age Group"
+bar4.y_axis.title  = "Revenue / Customer ($)"
+bar4.style         = 10
+bar4.width         = 18
+bar4.height        = 12
+bar4.add_data(Reference(ws3, min_col=11, min_row=4, max_row=9), titles_from_data=True)
+bar4.set_categories(Reference(ws3, min_col=8, min_row=5, max_row=9))
+bar4.series[0].graphicalProperties.solidFill      = PURPLE
+bar4.series[0].graphicalProperties.line.solidFill = PURPLE
+ws3.add_chart(bar4, "H11")
 
-# Bar chart — Revenue by Age  (H28)
-bar_age = BarChart()
-bar_age.type          = "col"
-bar_age.title         = "Total Revenue by Age Group ($)"
-bar_age.y_axis.title  = "Revenue ($)"
-bar_age.style         = 26
-bar_age.width         = 18
-bar_age.height        = 11
-cats_a = Reference(ws3, min_col=8, min_row=5, max_row=9)
-vals_a = Reference(ws3, min_col=9, min_row=4, max_row=9)
-bar_age.add_data(vals_a, titles_from_data=True)
-bar_age.set_categories(cats_a)
-bar_age.series[0].graphicalProperties.solidFill      = GREEN
-bar_age.series[0].graphicalProperties.line.solidFill = GREEN
-ws3.add_chart(bar_age, "H28")
+# Bar chart — Total Revenue by Age  H28
+bar5 = BarChart()
+bar5.type          = "col"
+bar5.title         = "Total Revenue by Age Group ($)"
+bar5.y_axis.title  = "Revenue ($)"
+bar5.style         = 10
+bar5.width         = 18
+bar5.height        = 11
+bar5.add_data(Reference(ws3, min_col=9, min_row=4, max_row=9), titles_from_data=True)
+bar5.set_categories(Reference(ws3, min_col=8, min_row=5, max_row=9))
+bar5.series[0].graphicalProperties.solidFill      = GREEN
+bar5.series[0].graphicalProperties.line.solidFill = GREEN
+ws3.add_chart(bar5, "H28")
 
 # ── Save ──────────────────────────────────────────────────────────────────────
 out = r"c:\Users\lucky\Downloads\Lucky-DataAnalyst-Internship-Portfolio\task-2-eda-business-intelligence\sales_dashboard_mockup.xlsx"
